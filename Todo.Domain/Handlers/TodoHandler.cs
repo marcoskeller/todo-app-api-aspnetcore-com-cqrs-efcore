@@ -32,7 +32,7 @@ namespace Todo.Domain.Handlers
             //Salvar um Todo no Banco
             _repository.Create(todo);
 
-            //Notificar o usuário
+            //Retorna o resultado
             return new GenericCommandResult(true, "Tarefa salva!", todo);
         }
 
