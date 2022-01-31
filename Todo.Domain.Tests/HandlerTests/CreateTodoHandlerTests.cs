@@ -9,22 +9,29 @@ namespace Todo.Domain.Tests.HandlerTests
     [TestClass]
     public class CreateTodoHandlerTests
     {
+        private readonly CreateTodoCommand _invalidCommand = new CreateTodoCommand("", DateTime.Now, "");
+
+        private readonly CreateTodoCommand _validCommand = new CreateTodoCommand("Titulo da tarefa", DateTime.Now, "Marcos");
+
+        private readonly TodoHandler _handler = new TodoHandler(new FakeTodoRepository());
+
+        private GenericCommandResult _result = new GenericCommandResult();
+
 
         [TestMethod]
         public void Dado_um_comano_invalido()
         {
             #region Arrange
-            var command = new CreateTodoCommand("", DateTime.Now,"");
             var handler = new TodoHandler(new FakeTodoRepository());
 
             #endregion
 
             #region Act
-            var result = (GenericCommandResult)handler.Handle(command);
+            _result = (GenericCommandResult)_handler.Handle(_invalidCommand);
             #endregion
 
             #region Assert
-            Assert.AreEqual(result.Sucess, false);
+            Assert.AreEqual(_result.Sucess, false);
             #endregion
         }
 
@@ -32,16 +39,15 @@ namespace Todo.Domain.Tests.HandlerTests
         public void Dado_um_comano_valido()
         {
             #region Arrange
-            var command = new CreateTodoCommand("Titulo da tarefa", DateTime.Now, "Marcos");
             var handler = new TodoHandler(new FakeTodoRepository());
             #endregion
 
             #region Act
-            var result = (GenericCommandResult)handler.Handle(command);
+            _result = (GenericCommandResult)_handler.Handle(_validCommand);
             #endregion
 
             #region Assert
-            Assert.AreEqual(result.Sucess, true);
+            Assert.AreEqual(_result.Sucess, true);
             #endregion
         }
     }
