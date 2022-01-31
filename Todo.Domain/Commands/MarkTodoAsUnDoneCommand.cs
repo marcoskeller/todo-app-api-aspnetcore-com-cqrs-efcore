@@ -1,12 +1,11 @@
 ﻿using Flunt.Notifications;
 using Flunt.Validations;
 using System;
-using System.Collections.Generic;
 using Todo.Domain.Commands.Contracts;
 
 namespace Todo.Domain.Commands
 {
-    public class MarkTodoAsUnDoneCommand : Notification, ICommand
+    public class MarkTodoAsUnDoneCommand : Notifiable, ICommand
     {
         public MarkTodoAsUnDoneCommand()
         {
@@ -22,14 +21,13 @@ namespace Todo.Domain.Commands
 
         public string User { get; set; }
 
-        public void AddNotifications(IEnumerable<Notification> notifications)
+        public void Validate()
         {
             AddNotifications(
-                new Contract<MarkTodoAsUnDoneCommand>()
-                    .Requires()
-                    .IsMinValue(6, User, "Usuário inválido!")
-                    .Notifications
-                );
+                     new Contract()
+                         .Requires()
+                         .HasMinLen(User, 6, "User", "Usuário inválido!")
+                     );
         }
     }
 }

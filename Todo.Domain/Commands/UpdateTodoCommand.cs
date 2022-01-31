@@ -1,12 +1,11 @@
 ﻿using Flunt.Notifications;
 using Flunt.Validations;
 using System;
-using System.Collections.Generic;
 using Todo.Domain.Commands.Contracts;
 
 namespace Todo.Domain.Commands
 {
-    public class UpdateTodoCommand : Notification, ICommand
+    public class UpdateTodoCommand : Notifiable, ICommand
     {
         public UpdateTodoCommand()
         {
@@ -25,15 +24,13 @@ namespace Todo.Domain.Commands
 
         public string User { get; set; }
 
-
-        public void AddNotifications(IEnumerable<Notification> notifications)
+        public void Validate()
         {
             AddNotifications(
-                new Contract<UpdateTodoCommand>()
+                new Contract()
                     .Requires()
-                    .IsMinValue(3, Title, "Por favor descreva melhor essa tarefa!")
-                    .IsMinValue(6, User, "Usuário inválido!")
-                    .Notifications
+                    .HasMinLen(Title, 3, "Title", "Por favor descreva melhor essa tarefa!")
+                    .HasMinLen(User, 6, "User", "Usuário inválido!")
                 );
         }
     }
