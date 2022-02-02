@@ -7,7 +7,11 @@ using Todo.Domain.Repositories;
 
 namespace Todo.Domain.Handlers
 {
-    public class TodoHandler : Notifiable, IHandler<CreateTodoCommand>, IHandler<UpdateTodoCommand>
+    public class TodoHandler : Notifiable, 
+        IHandler<CreateTodoCommand>, 
+        IHandler<UpdateTodoCommand>,
+        IHandler<MarkTodoAsDoneCommand>,
+        IHandler<MarkTodoAsUnDoneCommand>
     {
         private readonly ITodoRepository _repository;
 
@@ -46,11 +50,57 @@ namespace Todo.Domain.Handlers
                 return new GenericCommandResult(false, "Ops, parece que sua tarefa esta errada!", command.Notifications);
             }
 
-            //Recuperar um Todo do Banco
+            //Recuperar um Todo do Banco (Método também chamado de Reidratação)
             var todo = _repository.GetById(command.Id, command.User);
 
             //Altera o Titulo
             todo.UpdateTitle(command.Title);
+
+            //Salvar um Todo no Banco
+            _repository.Update(todo);
+
+            //Retorna o resultado
+            return new GenericCommandResult(true, "Tarefa salva!", todo);
+        }
+
+        public ICommandResult Handle(MarkTodoAsDoneCommand command)
+        {
+            //Atualiza um Todo (Fail Fast Validation)
+            command.Validate();
+
+            if (command.Invalid)
+            {
+                return new GenericCommandResult(false, "Ops, parece que sua tarefa esta errada!", command.Notifications);
+            }
+
+            //Recuperar um TodoItem do Banco (Método também chamado de Reidratação)
+            var todo = _repository.GetById(command.Id, command.User);
+
+            //Altera o estado
+            todo.MarkAsDone();
+
+            //Salvar um Todo no Banco
+            _repository.Update(todo);
+
+            //Retorna o resultado
+            return new GenericCommandResult(true, "Tarefa salva!", todo);
+        }
+
+        public ICommandResult Handle(MarkTodoAsUnDoneCommand command)
+        {
+            //Atualiza um Todo (Fail Fast Validation)
+            command.Validate();
+
+            if (command.Invalid)
+            {
+                return new GenericCommandResult(false, "Ops, parece que sua tarefa esta errada!", command.Notifications);
+            }
+
+            //Recuperar um TodoItem do Banco (Método também chamado de Reidratação)
+            var todo = _repository.GetById(command.Id, command.User);
+
+            //Altera o estado
+            todo.MarkAsUnDone();
 
             //Salvar um Todo no Banco
             _repository.Update(todo);
