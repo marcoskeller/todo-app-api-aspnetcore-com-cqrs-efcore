@@ -21,7 +21,7 @@ namespace Todo.Domain.Api.Controllers
         public IEnumerable<TodoItem> GetAll([FromServices] ITodoRepository repository)
         {
             var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
-            return repository.GetAllDone(user);
+            return repository.GetAll(user);
             //return repository.GetAll("Marcos");
         }
 
@@ -39,7 +39,7 @@ namespace Todo.Domain.Api.Controllers
         public IEnumerable<TodoItem> GetAllUnDone([FromServices] ITodoRepository repository)
         {
             var user = User.Claims.FirstOrDefault(x => x.Type == "user_id")?.Value;
-            return repository.GetAllDone(user);
+            return repository.GetAllUnDone(user);
             //return repository.GetAllUnDone("Marcos");
         }
 
